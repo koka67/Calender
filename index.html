@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simulator</title>
+    <style>
+        .slot-machine {
+            width: 300px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 20px;
+            background: #e74c3c;
+            border-radius: 10px;
+        }
+        .slots {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .slot {
+            width: 80px;
+            height: 80px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #2ecc71;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .balance {
+            color: white;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slot-machine">
+        <div class="balance">Balance: $<span id="money">100</span></div>
+        <div class="slots">
+            <div class="slot" id="s1">🍒</div>
+            <div class="slot" id="s2">🍒</div>
+            <div class="slot" id="s3">🍒</div>
+        </div>
+        <button id="spin">SPIN ($10)</button>
+        <div id="result" style="color:white; height:20px;"></div>
+    </div>
+
+    <script>
+        const symbols = ['🍒', '🍋', '🍊', '🍇', '💰', '7'];
+        let money = 100;
+        let autoSpin = false;
+        
+        function spin() {
+            if(money < 10) {
+                document.getElementById('result').textContent = "Not enough money!";
+                return;
+            }
+            
+            money -= 10;
+            document.getElementById('money').textContent = money;
+            
+            // 50% chance to win
+            const win = Math.random() < 0.5;
+            
+            if(win) {
+                // Winning spin
+                const winSymbol = symbols[Math.floor(Math.random()*symbols.length)];
+                document.getElementById('s1').textContent = winSymbol;
+                document.getElementById('s2').textContent = winSymbol;
+                document.getElementById('s3').textContent = winSymbol;
+                
+                const winAmount = 20;
+                money += winAmount;
+                document.getElementById('money').textContent = money;
+                document.getElementById('result').textContent = `You won $${winAmount}!`;
+            } else {
+                // Losing spin
+                document.getElementById('s1').textContent = symbols[Math.floor(Math.random()*symbols.length)];
+                document.getElementById('s2').textContent = symbols[Math.floor(Math.random()*symbols.length)];
+                document.getElementById('s3').textContent = symbols[Math.floor(Math.random()*symbols.length)];
+                document.getElementById('result').textContent = "Try again!";
+            }
+            
+            if(autoSpin && money >= 10) {
+                setTimeout(spin, 1000);
+            }
+        }
+        
+        document.getElementById('spin').addEventListener('click', function() {
+            if(!autoSpin) {
+                spin();
+            }
+        });
+        
+        // For educational purposes only - don't use in real games
+        function toggleAutoSpin() {
+            autoSpin = !autoSpin;
+            if(autoSpin && money >= 10) {
+                spin();
+            }
+        }
+    </script>
+</body>
+</html>
